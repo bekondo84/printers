@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Printers History</title>
+
+    <link rel="stylesheet" th:href="@{webjars/bootstrap/4.2.1/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+
+</head>
+
+<body>
+<header th:insert="fragments/header.html :: header"> </header>
+<main role="main" class="container">
+    <form th:action="@{/imprimante}" method="post" th:object="${prt}">
+        <input th:field="*{id}" type="hidden" >
+        <div class="form-group">
+            <label for="nom">Nom</label>
+            <input th:field="*{name}" type="text" class="form-control" id="nom" aria-describedby="emailHelp" placeholder="Nom imprimante">
+            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+        </div>
+        <div class="form-group">
+            <label for="model">Model</label>
+            <input th:field="*{model}"  type="text" class="form-control" id="model" placeholder="Model Imprimante">
+        </div>
+        <div class="form-group">
+            <label for="localisation">Localisation</label>
+            <input th:field="*{localisation}"  type="text" class="form-control" id="localisation" placeholder="Localisation">
+        </div>
+        <div class="form-group">
+            <label for="ipadress">Adresse IP</label>
+            <input th:field="*{ipAdress}"  type="text" class="form-control" id="ipadress" placeholder="IP">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+</main>
+<!-- /.container -->
+
+<script type="text/javascript" th:src="@{webjars/bootstrap/4.2.1/js/bootstrap.min.js}"></script>
+</body>
+</html>

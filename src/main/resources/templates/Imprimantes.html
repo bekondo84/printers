@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>Printers History</title>
+
+  <link rel="stylesheet" th:href="@{webjars/bootstrap/4.2.1/css/bootstrap.min.css}"/>
+  <link rel="stylesheet" th:href="@{/css/main.css}"/>
+
+</head>
+
+<body>
+<header th:insert="fragments/header.html :: header"> </header>
+<main role="main" class="container">
+  <nav class="nav">
+    <a class="nav-link active" th:href="@{/imprimante}">Nouveau</a>
+  </nav>
+  <section>
+    <table class="table table-sm table-hover  table-hover">
+      <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Model</th>
+        <th scope="col">Localisation</th>
+        <th scope="col">Adress IP</th>
+      </tr>
+      </thead>
+      <tbody>
+        <tr th:each="prt : ${printers}">
+          <th scope="row">
+            <input type="checkbox">
+          </th>
+          <td><a th:href="@{'/imprimante?id='+ ${{prt.id}} }" th:text="${{prt.name}}"></a></td>
+          <td><a th:href="@{'/imprimante?id='+ ${{prt.id}} }" th:text="${{prt.model}}"></a></td>
+          <td><a th:href="@{'/imprimante?id='+ ${{prt.id}} }" th:text="${{prt.localisation}}"></a></td>
+          <td><a th:href="@{'/imprimante?id='+ ${{prt.id}} }" th:text="${{prt.ipAdress}}"></a></td>
+          <td> <a th:href="@{'/imprimante/'+ ${{prt.id}}}" class="btn btn-danger">Supprimer</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</main>
+<!-- /.container -->
+
+<script type="text/javascript" th:src="@{webjars/bootstrap/4.2.1/js/bootstrap.min.js}"></script>
+</body>
+</html>

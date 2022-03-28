@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Spring Boot Thymeleaf Hello World Example</title>
+
+    <link rel="stylesheet" th:href="@{webjars/bootstrap/4.2.1/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+
+</head>
+
+<body>
+<div th:fragment="reportingHeader">
+      <section>
+            <form th:action="@{/reporting}" th:object="${search}" method="post">
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="from">De</label>
+                        <input type="date" class="form-control" id="from" placeholder="date debut" th:field="*{from}">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="to">A</label>
+                        <input type="date" class="form-control" id="to" placeholder="date fin" th:field="*{to}">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="groupby">Grouper Par</label>
+                        <select id="groupby" class="form-control form-control-sm" th:field="*{groupBy}">
+                            <option value="1">Utilisateur</option>
+                            <option value="2">Imprimante</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Rechercher</button>
+            </form>
+        </section>
+</div>
+<!-- /.container -->
+</body>
+</html>
