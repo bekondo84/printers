@@ -6,9 +6,8 @@
 
   <title>Printers History</title>
   <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
-  <link rel="stylesheet" th:href="@{webjars/bootstrap/4.2.1/css/bootstrap.min.css}"/>
-  <link rel="stylesheet" th:href="@{/css/main.css}"/>
-
+  <link rel="stylesheet" th:href="@{/bootstrap.min.css}">
+  <script th:src="@{/jquery.min.js}"></script>
 </head>
 
 <body>
@@ -19,21 +18,27 @@
     <table class="table table-sm table-hover  table-hover">
       <thead>
       <tr>
-        <th scope="col">Utilisateur</th>
+        <th scope="col">ID</th>
+        <th scope="col">Nom</th>
+        <th scope="col">Service</th>
+        <th scope="col">Structure</th>
         <th scope="col">Total impression</th>
       </tr>
       </thead>
       <tbody>
       <tr th:each="data : ${datas}">
-        <td th:text="${{data.owner}}"></a></td>
-        <td th:text="${{data.output}}"></a></td>
+        <td th:text="${{data.user.id}}"></td>
+        <td th:text="${{data.user.name}}"></td>
+        <td th:text="${{data.user.codeService}}"></td>
+        <td th:text="${{data.user.codeStructure}}"></td>
+        <td th:text="${{data.output}}"></td>
       </tr>
       </tbody>
     </table>
   </section>
 </main>
 <!-- /.container -->
-
-<script type="text/javascript" th:src="@{webjars/bootstrap/4.2.1/js/bootstrap.min.js}"></script>
+<script th:src="@{/jquery.min.js}"></script>
+<script th:src="@{/bootstrap.min.js}"></script>
 </body>
 </html>

@@ -5,10 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <title>Printers History</title>
-
-    <link rel="stylesheet" th:href="@{webjars/bootstrap/4.2.1/css/bootstrap.min.css}"/>
-    <link rel="stylesheet" th:href="@{/css/main.css}"/>
-
+    <link rel="stylesheet" th:href="@{/bootstrap.min.css}">
+    <script th:src="@{/jquery.min.js}"></script>
 </head>
 
 <body>
@@ -33,12 +31,11 @@
             <label for="ipadress">Adresse IP</label>
             <input th:field="*{ipAdress}"  type="text" class="form-control" id="ipadress" placeholder="IP">
         </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="submit" class="btn btn-primary" >Sauvegarder</button>
     </form>
 
 </main>
 <!-- /.container -->
-
-<script type="text/javascript" th:src="@{webjars/bootstrap/4.2.1/js/bootstrap.min.js}"></script>
+<script th:src="@{/bootstrap.min.js}"></script>
 </body>
 </html>

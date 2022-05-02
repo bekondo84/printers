@@ -17,15 +17,15 @@
         <table class="table table-sm table-hover table-hover">
             <thead>
             <tr>
-                <th scope="col">Imprimante</th>
-                <th scope="col">Nom</th>
+                <th scope="col">Service</th>
+                <th scope="col">Nom Service</th>
                 <th scope="col">Total impression</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="data : ${datas}">
-                <td th:text="${{data.printer.ipAdress}}"></a></td>
-                <td th:text="${{data.printer.name}}"></td>
+                <td th:text="${{data.structure.code}}"></a></td>
+                <td th:text="${{data.structure.intitule}}"></td>
                 <td th:text="${{data.output}}"></a></td>
             </tr>
             </tbody>

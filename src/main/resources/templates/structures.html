@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Printers History</title>
+    <link rel="stylesheet" th:href="@{/bootstrap.min.css}">
+    <script th:src="@{/jquery.min.js}"></script>
+</head>
+<body>
+<header th:insert="fragments/header.html :: header"> </header>
+<section>
+    <form th:action="@{/users}" th:object="${criteria}" method="post"  enctype="multipart/form-data">
+        <div class="form-row" style="margin-top: 40px;margin-left: 25px;">
+            <div class="form-group col-md-4">
+                <input type="file" class="form-control-file"
+                       id="exampleFormControlFile1"
+                       th:field="*{files}" multiple="multiple" accept="text/csv">
+            </div>
+            <div class="form-group col-md-4">
+                <button class="btn btn-primary" type="submit">Valider</button>
+            </div>
+        </div>
+    </form>
+</section>
+<section>
+    <table class="table table-sm table-hover table-hover">
+        <thead>
+        <tr>
+            <th>Code</th>
+            <th>Intitulé</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="data: ${datas}">
+            <td th:text="${{data.code}}"></td>
+            <td th:text="${{data.intitule}}"></td>
+        </tr>
+        </tbody>
+    </table>
+</section>
+<script th:src="@{/bootstrap.min.js}"></script>
+</body>
+</html>

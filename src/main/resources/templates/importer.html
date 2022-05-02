@@ -5,10 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <title>Printers History</title>
-
-    <link rel="stylesheet" th:href="@{webjars/bootstrap/4.2.1/css/bootstrap.min.css}"/>
-    <link rel="stylesheet" th:href="@{/css/main.css}"/>
-
+    <link rel="stylesheet" th:href="@{/bootstrap.min.css}">
+    <script th:src="@{/jquery.min.js}"></script>
 </head>
 
 <body>
@@ -23,18 +21,26 @@
                         th:value="${prt.id}">Large select</option>
             </select>
         </div>
-        <div class="form-group">
-            <label for="exampleFormControlFile1">Example file input</label>
-            <input type="file" class="form-control-file"
-                   id="exampleFormControlFile1"
-                   th:field="*{files}" multiple="multiple">
+        <div class="row">
+            <div class="col">
+                <label for="exampleFormControlFile1">Premier fichier</label>
+                <input type="file" class="form-control-file"
+                       id="exampleFormControlFile1"
+                       th:field="*{files}" multiple="multiple" accept="text/csv">
+            </div>
+            <div class="col">
+                <label for="exampleFormControlFile2">Second fichier</label>
+                <input type="file" class="form-control-file"
+                       id="exampleFormControlFile2" accept="text/csv"
+                       th:field="*{files}" multiple="multiple">
+            </div>
         </div>
-        <button type="submit" class="btn btn-primary">Validé</button>
+
+        <button type="submit" class="btn btn-primary" style="margin-top: 40px;">Sauvegarder</button>
     </form>
 
 </main>
 <!-- /.container -->
-
-<script type="text/javascript" th:src="@{webjars/bootstrap/4.2.1/js/bootstrap.min.js}"></script>
+<script th:src="@{/bootstrap.min.js}"></script>
 </body>
 </html>

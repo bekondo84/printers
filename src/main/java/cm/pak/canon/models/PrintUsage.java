@@ -10,20 +10,26 @@ import java.util.Date;
 public class PrintUsage implements Serializable {
     @Id
     private String jobId ;
-
     @Id
     private Long printerId ;
+    @Id
+    private String userName ;
+    @Id
+    private String fileName ;
 
     @ManyToOne
     @JoinColumn(name = "prt_ID")
     private Imprimante printer ;
+
+    @ManyToOne
+    @JoinColumn(name = "user_ID")
+    private User user ;
+
     private String result;
     private Date startTime ;
     private Date endTime ;
     private String departmentId;
     private String jobType ;
-    private String fileName ;
-    private String userName;
     private Integer originalPages;
     private Integer outputPages ;
     private String sheetCopies;
@@ -160,6 +166,14 @@ public class PrintUsage implements Serializable {
 
     public void setJobNote(String jobNote) {
         this.jobNote = jobNote;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     @Override

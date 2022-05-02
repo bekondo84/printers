@@ -26,11 +26,10 @@
                     </div>
                     <div class="form-group col-md-4">
                         <label for="groupby">Grouper Par</label>
-                        <select id="groupby" class="form-control form-control-sm" th:field="*{groupBy}">
-                            <option value="1">Utilisateur(s)</option>
-                            <option value="2">Imprimante(s)</option>
-                            <option value="3">Service(s)</option>
-                            <option value="4">Structure(s)</option>
+                        <select id="groupby" class="form-control form-control-sm" th:field="*{codeStructure}">
+                            <option th:each="str : ${structures}"
+                                    th:text="${str.code}"
+                                    th:value="${str.code}">Structure(s)</option>
                         </select>
                     </div>
                 </div>

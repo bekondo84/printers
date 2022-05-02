@@ -2,6 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:fragment="headerfiles">
     <meta charset="utf-8">
+    <!-- See configuration in WebMvConfig.java -->
 </head>
 
 <body>
@@ -18,13 +19,33 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
-                    <a class="nav-link" th:href="@{/imprimantes}">Imprimantes <span class="sr-only">(current)</span></a>
+
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/importer}">Importer</a>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" th:href="@{/reporting}">Reporting</a>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown2" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Etat(s)
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown2">
+                        <a class="dropdown-item" th:href="@{/reporting}">Etat global</a>
+                        <div class="dropdown-divider"></div>
+                        <!--
+                        <a class="dropdown-item"  th:href="@{/users}">Etat par Structure</a>
+                        -->
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Configurations
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" th:href="@{/imprimantes}">Imprimantes</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item"  th:href="@{/users}">Utilisateurs</a>
+                        <a class="dropdown-item"  th:href="@{/structures}">Structures</a>
+                    </div>
                 </li>
             </ul>
         </div>

@@ -1,9 +1,5 @@
 package cm.pak.canon.models;
 
-import javax.persistence.Embeddable;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import java.io.Serializable;
 
 
@@ -13,9 +9,12 @@ public class PrintUsageId implements Serializable {
 
     private Long printerId ;
 
-    public PrintUsageId(String jobId, Long printer) {
+    private String userName ;
+
+    public PrintUsageId(String jobId, Long printerId, String userId) {
         this.jobId = jobId;
-        this.printerId = printer;
+        this.printerId = printerId;
+        this.userName = userId;
     }
 
     public PrintUsageId() {
@@ -35,5 +34,13 @@ public class PrintUsageId implements Serializable {
 
     public void setPrinterId(Long printerId) {
         this.printerId = printerId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }
