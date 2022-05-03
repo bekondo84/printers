@@ -5,6 +5,7 @@ import cm.pak.canon.beans.PrintUsageData;
 import cm.pak.canon.beans.StructureData;
 import cm.pak.canon.beans.UserData;
 import cm.pak.canon.facades.PrintUsageFacade;
+import cm.pak.canon.models.PrintUsage;
 import cm.pak.canon.models.Structure;
 import cm.pak.canon.populator.impl.PrintUsagePopulator;
 import cm.pak.canon.services.PrintUsageService;
@@ -26,6 +27,33 @@ public class PrintUsageFacadeImpl implements PrintUsageFacade {
 
     @Autowired
     private PrintUsagePopulator populator ;
+
+    @Override
+    public List<PrintUsageData> getPrintUsageForStructureForDates(String from, String to, String structure) throws ParseException {
+        final List<PrintUsageData> datas = new ArrayList<>();
+        final Map<UserData, Integer> userGroup = printUsageService.getPrintUsageForStructureForDates(from, to, structure)
+                .stream().map(data ->populator.populate(data))
+                .collect(Collectors.groupingBy(PrintUsageData::getUser, Collectors.summingInt(PrintUsageData::getOutput)));
+        userGroup.keySet()
+                .forEach(key ->{
+                    final PrintUsageData data = new PrintUsageData();
+                    data.setUser(key);
+                    data.setOutput(userGroup.get(key));
+                    datas.add(data);
+                });
+        sortDatas(datas);
+        return datas;
+    }
+
+    @Override
+    public List<PrintUsageData> getUserPrintUsageResume(String from, String to, String user) throws ParseException {
+        final List<PrintUsageData> datas = printUsageService.getUserPrintUsageResume(from, to, user)
+                .stream()
+                .map(d -> populator.populate(d))
+                .collect(Collectors.toList());
+        sortDatas(datas);
+        return datas;
+    }
 
     @Override
     public List<PrintUsageData> getPrinterForUsers(String from, String to) throws ParseException {

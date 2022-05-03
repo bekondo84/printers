@@ -7,6 +7,7 @@ public class SearchBean implements Serializable {
    private String to ;
    private int groupBy ;
    private String codeStructure;
+   private String userId;
 
     public SearchBean() {
     }
@@ -41,6 +42,14 @@ public class SearchBean implements Serializable {
 
     public void setCodeStructure(String codeStructure) {
         this.codeStructure = codeStructure;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     @Override

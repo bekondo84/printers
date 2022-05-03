@@ -15,12 +15,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -108,11 +110,41 @@ public class CanonHomeCtr {
         return "/reportingStructures";
     }
 
-    public String reportingStructure(final Model model, final SearchBean seach) {
-        final List<StructureData> structures = structureFacade.getStructures(0, -1);
-        model.addAttribute("structures", structures);
+    @GetMapping("/reporting-str")
+    public String reportingStructure(final Model model) throws ParseException {
+        final List<PrintUsageData> datas = new ArrayList<>();
+        model.addAttribute("datas", datas);
         final SearchBean search = new SearchBean();
         model.addAttribute("search", search);
-        return "/";
+        return "/reportingPrintusageForStructure";
+    }
+    @PostMapping("/reporting-str")
+    public String reportingStructure(final Model model, @ModelAttribute("searh") final SearchBean search) throws ParseException {
+        if (StringUtils.hasLength(search.getCodeStructure())) {
+            final List<PrintUsageData> datas = printUsageFacade.getPrintUsageForStructureForDates(search.getFrom(), search.getTo(), search.getCodeStructure());
+            model.addAttribute("datas", datas);
+            //final SearchBean search = new SearchBean();
+        }
+        model.addAttribute("search", search);
+        return "/reportingPrintusageForStructure";
+    }
+
+    @GetMapping("/reporting-indiv")
+    public String reportingIndividuel(final Model model) {
+        final List<PrintUsageData> datas = new ArrayList<>();
+        model.addAttribute("datas", datas);
+        final SearchBean search = new SearchBean();
+        model.addAttribute("search", search);
+        return "/reportingPrintusageIndividual";
+    }
+
+    @PostMapping("/reporting-indiv")
+    public String reportingIndividuel(final Model model, @ModelAttribute("search") final SearchBean search) throws ParseException {
+        if (StringUtils.hasLength(search.getUserId())) {
+            final List<PrintUsageData> datas = printUsageFacade.getUserPrintUsageResume(search.getFrom(), search.getTo(), search.getUserId());
+            model.addAttribute("datas", datas);
+        }
+        model.addAttribute("search", search);
+        return "/reportingPrintusageIndividual";
     }
 }

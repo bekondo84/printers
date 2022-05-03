@@ -11,8 +11,9 @@
 </head>
 <body>
 <header th:insert="fragments/header.html :: header"> </header>
+
 <section>
-    <form th:action="@{/users}" th:object="${criteria}" method="post"  enctype="multipart/form-data">
+    <form th:action="@{/structures}" th:object="${criteria}" method="post"  enctype="multipart/form-data">
         <div class="form-row" style="margin-top: 40px;margin-left: 25px;">
             <div class="form-group col-md-4">
                 <input type="file" class="form-control-file"

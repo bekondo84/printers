@@ -9,6 +9,8 @@ public class PrintUsageData implements Serializable {
 
     private StructureData structure;
 
+    private String date ;
+
     private int original ;
 
     private int output ;
@@ -54,5 +56,13 @@ public class PrintUsageData implements Serializable {
 
     public void setStructure(StructureData structure) {
         this.structure = structure;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }
