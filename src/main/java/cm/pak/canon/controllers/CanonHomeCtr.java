@@ -3,13 +3,11 @@ package cm.pak.canon.controllers;
 import cm.pak.canon.beans.ImportBean;
 import cm.pak.canon.beans.PrintUsageData;
 import cm.pak.canon.beans.SearchBean;
-import cm.pak.canon.beans.StructureData;
 import cm.pak.canon.facades.PrintUsageFacade;
 import cm.pak.canon.facades.StructureFacade;
 import cm.pak.canon.models.Imprimante;
 import cm.pak.canon.services.CSVService;
 import cm.pak.canon.services.ImprimanteService;
-import cm.pak.canon.services.PrintUsageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +41,7 @@ public class CanonHomeCtr {
     private StructureFacade structureFacade;
 
     @GetMapping
-    public String loginPage(Model model) {
+    public String homePage(final Model model) {
         return "canonHomePage" ;
     }
 
