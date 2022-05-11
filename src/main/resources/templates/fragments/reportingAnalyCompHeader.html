@@ -1,0 +1,53 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Spring Boot Thymeleaf Hello World Example</title>
+
+    <link rel="stylesheet" th:href="@{webjars/bootstrap/4.2.1/css/bootstrap.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/main.css}"/>
+
+</head>
+
+<body>
+<div th:fragment="reportingHeader">
+      <section>
+            <form th:action="@{/reporting-anal-comp}" th:object="${search}" method="post">
+                <div class="form-row">
+                    <div class="form-group col-md-3">
+                        <label for="from">De</label>
+                        <input type="date" required class="form-control" id="from" placeholder="date debut" th:field="*{from}">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="to">A</label>
+                        <input type="date" required class="form-control" id="to" placeholder="date fin" th:field="*{to}">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="groupby">Grouper Par</label>
+                        <select id="groupby" class="form-control form-control-sm" th:field="*{groupBy}">
+                            <option value="1">Utilisateur(s)</option>
+                            <option value="2">Imprimante(s)</option>
+                            <option value="3">Service(s)</option>
+                            <option value="4">Structure(s)</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="cycle">Cycle</label>
+                        <select id="cycle" class="form-control form-control-sm" th:field="*{cycle}">
+                            <option value="1">Journalier</option>
+                            <option value="2">Hebdomadaire</option>
+                            <option value="3">Mensuel</option>
+                            <option value="4">Annuel</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Rechercher</button>
+                <button type="button" class="btn btn-secondary">Exporter</button>
+            </form>
+        </section>
+</div>
+<!-- /.container -->
+</body>
+</html>

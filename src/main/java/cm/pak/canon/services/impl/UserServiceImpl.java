@@ -45,7 +45,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void importUsers(MultipartFile mpf) throws IOException {
-        final String[] headers = {"id", "name", "codeService", "codeStructure"};
+        final String[] headers = {"id", "name", "codeService","nameService", "codeStructure", "nameStructure"};
         final List<UserData> datas = csvService.parseCsv(mpf.getInputStream(), headers, new UserData());
 
         if (!CollectionUtils.isEmpty(datas)) {
@@ -68,20 +68,32 @@ public class UserServiceImpl implements UserService {
     }
 
     private Structure getStructure(UserData userData) {
-        Structure str =  structureRepository.findById(userData.getCodeStructure())
+        Structure str =  structureRepository.findById(truncate(userData.getCodeStructure()))
                 .orElse(null);
-        if (Objects.nonNull(str)) {
-            str = new Structure(userData.getCodeStructure(), null);
+        if (Objects.isNull(str)) {
+            str = new Structure(userData.getCodeStructure(), truncate(userData.getNameStructure()));
+            str = structureRepository.save(str);
+        } else if (StringUtils.hasLength(userData.getNameStructure())
+                && !StringUtils.hasLength(str.getIntitule())){
+            str.setIntitule(userData.getNameStructure());
             str = structureRepository.save(str);
         }
         return str;
+    }
+
+    private String truncate(String userData) {
+        return userData.substring(0, userData.length()> 200 ? 200: userData.length());
     }
 
     private Structure getAffectation(UserData userData) {
         Structure str = structureRepository.findById(userData.getCodeService())
                 .orElse(null);
         if (Objects.isNull(str)) {
-            str = new Structure(userData.getCodeService(), null);
+            str = new Structure(userData.getCodeService(), truncate(userData.getNameService()));
+            str = structureRepository.save(str);
+        } else if(StringUtils.hasLength(userData.getNameService())
+            && !StringUtils.hasLength(str.getIntitule())) {
+            str.setIntitule(truncate(userData.getNameService()));
             str = structureRepository.save(str);
         }
         return str ;

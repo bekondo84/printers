@@ -1,8 +1,10 @@
 package cm.pak.canon.controllers;
 
+import cm.pak.canon.beans.AnalyseComparativeData;
 import cm.pak.canon.beans.ImportBean;
 import cm.pak.canon.beans.PrintUsageData;
 import cm.pak.canon.beans.SearchBean;
+import cm.pak.canon.facades.AnalyseComparativeFacade;
 import cm.pak.canon.facades.PrintUsageFacade;
 import cm.pak.canon.facades.StructureFacade;
 import cm.pak.canon.models.Imprimante;
@@ -39,6 +41,9 @@ public class CanonHomeCtr {
 
     @Autowired
     private StructureFacade structureFacade;
+
+    @Autowired
+    private AnalyseComparativeFacade analyseComparativeFacade;
 
     @GetMapping
     public String homePage(final Model model) {
@@ -144,5 +149,22 @@ public class CanonHomeCtr {
         }
         model.addAttribute("search", search);
         return "/reportingPrintusageIndividual";
+    }
+
+    @GetMapping("/reporting-anal-comp")
+    public String analyseComparative(final Model model) {
+         final SearchBean search = new SearchBean();
+         model.addAttribute("search", search);
+        model.addAttribute("headers", new ArrayList<>());
+        model.addAttribute("datas", new ArrayList<AnalyseComparativeData>());
+        return "/comparativeAnalyze";
+    }
+
+    @PostMapping("/reporting-anal-comp")
+    public String analyseComparative(final Model model, @ModelAttribute("search") SearchBean search) throws ParseException {
+       LOG.info(String.format("Headers : %s", analyseComparativeFacade.headers(search.getCycle(), search.getFrom(), search.getTo())));
+        model.addAttribute("headers", analyseComparativeFacade.headers(search.getCycle(), search.getFrom(), search.getTo()));
+        model.addAttribute("datas", analyseComparativeFacade.analyseComparative(search.getFrom(), search.getTo(), Integer.toString(search.getGroupBy()), search.getCycle()));
+        return "/comparativeAnalyze";
     }
 }

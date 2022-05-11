@@ -40,6 +40,17 @@ public class PrintUsage implements Serializable {
     public PrintUsage() {
     }
 
+    public PrintUsage(String jobId, Long printerId, String fileName, User user, Date startTime, Date endTime, Integer originalPages, Integer outputPages) {
+        this.jobId = jobId;
+        this.printerId = printerId;
+        this.fileName = fileName;
+        this.user = user;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.originalPages = originalPages;
+        this.outputPages = outputPages;
+    }
+
     public String getJobId() {
         return jobId;
     }
@@ -175,6 +186,7 @@ public class PrintUsage implements Serializable {
     public void setUser(User user) {
         this.user = user;
     }
+
 
     @Override
     public String toString() {

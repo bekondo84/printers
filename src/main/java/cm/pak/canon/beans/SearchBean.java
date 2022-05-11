@@ -3,11 +3,13 @@ package cm.pak.canon.beans;
 import java.io.Serializable;
 
 public class SearchBean implements Serializable {
+
    private String from ;
    private String to ;
    private int groupBy ;
    private String codeStructure;
    private String userId;
+   private String cycle ;
 
     public SearchBean() {
     }
@@ -50,6 +52,14 @@ public class SearchBean implements Serializable {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getCycle() {
+        return cycle;
+    }
+
+    public void setCycle(String cycle) {
+        this.cycle = cycle;
     }
 
     @Override

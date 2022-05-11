@@ -30,6 +30,14 @@ public class User implements Serializable {
     public User() {
     }
 
+    public User(String userId, String name, String firstName, Structure affectation, Structure structure) {
+        this.userId = userId;
+        this.name = name;
+        this.firstName = firstName;
+        this.affectation = affectation;
+        this.structure = structure;
+    }
+
     public User(String userId) {
         this.userId = userId;
     }
