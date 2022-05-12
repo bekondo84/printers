@@ -9,7 +9,10 @@ import cm.pak.canon.facades.PrintUsageFacade;
 import cm.pak.canon.facades.StructureFacade;
 import cm.pak.canon.models.Imprimante;
 import cm.pak.canon.services.CSVService;
+import cm.pak.canon.services.ExcelService;
 import cm.pak.canon.services.ImprimanteService;
+import cm.pak.canon.services.impl.UserRowService;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,9 +23,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -44,6 +51,12 @@ public class CanonHomeCtr {
 
     @Autowired
     private AnalyseComparativeFacade analyseComparativeFacade;
+
+    @Autowired
+    private ExcelService excelService ;
+
+    @Autowired
+    private UserRowService userRowService;
 
     @GetMapping
     public String homePage(final Model model) {
@@ -84,7 +97,7 @@ public class CanonHomeCtr {
         return  "/reporting";
     }
 
-    @PostMapping("/reporting")
+    @PostMapping(value = "/reporting", params = "action=find")
     public String reporting(final Model model, @ModelAttribute("searh") final SearchBean search) throws ParseException {
 
         if (search.getGroupBy() == 1) {
@@ -103,6 +116,43 @@ public class CanonHomeCtr {
 
         if (search.getGroupBy() == 3) {
            final List<PrintUsageData> datas = printUsageFacade.printGroupbyAffectation(search.getFrom(), search.getTo());
+            model.addAttribute("search", search);
+            model.addAttribute("datas", datas);
+            return "/reportingAffectations";
+        }
+        final List<PrintUsageData> datas = printUsageFacade.printGroupbyStructure(search.getFrom(), search.getTo());
+        model.addAttribute("search", search);
+        model.addAttribute("datas", datas);
+        return "/reportingStructures";
+    }
+
+    @PostMapping(value = "/reporting", params = "action=extract")
+    public String extractSynthese(final Model model, @ModelAttribute("search") SearchBean search) throws ParseException, NoSuchFieldException, IllegalAccessException, IOException {
+        LOG.info("INSIDE EXTRACT CONTROLLER");
+        if (search.getGroupBy() == 1) {
+            final List<PrintUsageData> datas =printUsageFacade.getPrinterForUsers(search.getFrom(), search.getTo());
+            model.addAttribute("search", search) ;
+            model.addAttribute("datas", datas);
+            final Workbook workbook = excelService.createExcel(new String[]{"ID", "Nom", "Service", "Structure", "Total impression"}, datas, userRowService);
+            File currDir = new File(".");
+            String path = currDir.getAbsolutePath();
+            String fileLocation = path.substring(0, path.length() - 1) + "temp.xlsx";
+
+            FileOutputStream outputStream = new FileOutputStream(fileLocation);
+            workbook.write(outputStream);
+            workbook.close();
+            return "/reportingUsers";
+        }
+
+        if (search.getGroupBy() == 2) {
+            final List<PrintUsageData> datas = printUsageFacade.getPrinterForPrinters(search.getFrom(), search.getTo());
+            model.addAttribute("search", search);
+            model.addAttribute("datas", datas);
+            return "/reportingPrinters";
+        }
+
+        if (search.getGroupBy() == 3) {
+            final List<PrintUsageData> datas = printUsageFacade.printGroupbyAffectation(search.getFrom(), search.getTo());
             model.addAttribute("search", search);
             model.addAttribute("datas", datas);
             return "/reportingAffectations";
@@ -157,14 +207,22 @@ public class CanonHomeCtr {
          model.addAttribute("search", search);
         model.addAttribute("headers", new ArrayList<>());
         model.addAttribute("datas", new ArrayList<AnalyseComparativeData>());
-        return "/comparativeAnalyze";
+        return "/comparativeAnalyzeUsers";
     }
 
     @PostMapping("/reporting-anal-comp")
     public String analyseComparative(final Model model, @ModelAttribute("search") SearchBean search) throws ParseException {
-       LOG.info(String.format("Headers : %s", analyseComparativeFacade.headers(search.getCycle(), search.getFrom(), search.getTo())));
+        //LOG.info(String.format("Headers : %s", analyseComparativeFacade.headers(search.getCycle(), search.getFrom(), search.getTo())));
         model.addAttribute("headers", analyseComparativeFacade.headers(search.getCycle(), search.getFrom(), search.getTo()));
         model.addAttribute("datas", analyseComparativeFacade.analyseComparative(search.getFrom(), search.getTo(), Integer.toString(search.getGroupBy()), search.getCycle()));
-        return "/comparativeAnalyze";
+
+        if (search.getGroupBy() == 2) {
+            return "/comparativeAnalyzePrinters";
+        }
+        if(search.getGroupBy() == 3 || search.getGroupBy() == 4){
+            return  "comparativeAnalyzeStructures";
+        }
+        return "/comparativeAnalyzeUsers";
     }
+
 }

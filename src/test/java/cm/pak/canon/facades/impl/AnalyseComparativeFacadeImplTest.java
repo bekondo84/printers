@@ -2,12 +2,14 @@ package cm.pak.canon.facades.impl;
 
 
 import cm.pak.canon.beans.AnalyseComparativeData;
+import cm.pak.canon.beans.Week;
 import cm.pak.canon.facades.AnalyseComparativeFacade;
 import cm.pak.canon.models.PrintUsage;
 import cm.pak.canon.models.User;
 import cm.pak.canon.populator.impl.UserPopulator;
 import cm.pak.canon.services.PrintUsageService;
 import cm.pak.canon.services.impl.PrintUsageServiceImpl;
+import org.apache.commons.collections4.CollectionUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -17,6 +19,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -56,6 +59,21 @@ public class AnalyseComparativeFacadeImplTest extends AnalyseComparativeFacadeIm
         assertEquals(result.get(0).getLignes().get(0).getQuantity(), 3);
         assertEquals(result.get(0).getLignes().get(1).getQuantity(), 3);
         assertEquals(result.get(0).getLignes().get(2).getQuantity(), 0);
+    }
+
+    @Test
+    void shouldReturnWeekWtihCorrectDate() throws ParseException {
+        final String from = "2022-04-01";
+        final String to ="2022-05-12";
+        final List<Week> weeks = getWeeksBetween(from, to);
+        assertNotNull(weeks);
+        assertTrue(CollectionUtils.isNotEmpty(weeks));
+        assertEquals(SDF.format(weeks.get(0).getFrom()), "2022-04-01");
+        assertEquals(SDF.format(weeks.get(0).getTo()), "2022-04-03");
+        assertEquals(SDF.format(weeks.get(1).getFrom()), "2022-04-04");
+        assertEquals(SDF.format(weeks.get(1).getTo()), "2022-04-10");
+        assertEquals(SDF.format(weeks.get(4).getFrom()), "2022-04-25");
+        assertEquals(SDF.format(weeks.get(4).getTo()), "2022-05-01");
     }
 
     private List<PrintUsage> getPrintDateForUsers() throws ParseException {

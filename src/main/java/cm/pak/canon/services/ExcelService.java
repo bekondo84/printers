@@ -7,25 +7,19 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.util.List;
 
-public interface ExcelService  <T extends Object>{
+public interface ExcelService  {
 
-     /**
-      *
-      * @param headers
-      * @param headerStyle
-      * @param datas
-      */
-     public void pullExcellRow(String[] headers, final Sheet sheet, CellStyle headerStyle, List<PrintUsageData> datas) throws NoSuchFieldException, IllegalAccessException;
      /**
       *
       * @param header
       * @param data
       * @return
       */
-    public default Workbook createExcel(final String[] header, final List<T> data) {
+    public default Workbook createExcel(final String[] header, final List data, final ExcelRowService rowService) throws NoSuchFieldException, IllegalAccessException {
           final Workbook workbook = new XSSFWorkbook();
           final Sheet sheet = workbook.createSheet();
           createHeader(header, sheet, workbook);
+          createBody(header, sheet, workbook, data, rowService);
           return workbook;
      }
 
@@ -37,11 +31,15 @@ public interface ExcelService  <T extends Object>{
       */
       default void createHeader(final String[] headers, final Sheet sheet, final Workbook workbook) {
           CellStyle style = workbook.createCellStyle();
+          XSSFFont font = ((XSSFWorkbook) workbook).createFont();
+          font.setFontName("Arial");
+          font.setFontHeightInPoints((short) 12);
+          font.setBold(true);
+          style.setFont(font);
           style.setWrapText(true);
-          Row row = sheet.createRow(headers.length);
-
+          Row row = sheet.createRow(0);
           for(int i=0; i<headers.length; i++){
-               Cell cell = row.createCell(i);
+              Cell cell = row.createCell(i);
                cell.setCellValue(headers[i]);
                cell.setCellStyle(style);
           }
@@ -52,22 +50,22 @@ public interface ExcelService  <T extends Object>{
       * @param headers
       * @param workbook
       */
-     default void createBody(String[] headers, final Sheet sheet, final Workbook workbook, final List<PrintUsageData> datas) throws NoSuchFieldException, IllegalAccessException {
+     default void createBody(String[] headers, final Sheet sheet, final Workbook workbook, final List datas, final ExcelRowService rowService) throws NoSuchFieldException, IllegalAccessException {
           sheet.setColumnWidth(0, 6000);
           sheet.setColumnWidth(1, 4000);
 
-          final Row header =  sheet.createRow(0);
           CellStyle headerStyle = workbook.createCellStyle();
-          headerStyle.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
-          headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+          headerStyle.setWrapText(true);
+          //headerStyle.setFillForegroundColor(IndexedColors.LIGHT_BLUE.getIndex());
+          //headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
 
           XSSFFont font = ((XSSFWorkbook) workbook).createFont();
           font.setFontName("Arial");
-          font.setFontHeightInPoints((short) 16);
-          font.setBold(true);
+          font.setFontHeightInPoints((short) 12);
+          font.setBold(false);
           headerStyle.setFont(font);
 
-          pullExcellRow(headers, sheet, headerStyle, datas);
+          rowService.createRows(headers, sheet, headerStyle, datas);
      }
 
 }

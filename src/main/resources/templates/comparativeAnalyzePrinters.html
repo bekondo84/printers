@@ -1,0 +1,38 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>Printers History</title>
+  <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
+  <link rel="stylesheet" th:href="@{/bootstrap.min.css}">
+  <script th:src="@{/jquery.min.js}"></script>
+</head>
+
+<body>
+<header th:insert="fragments/header.html :: header"> </header>
+<main role="main" class="container">
+  <div th:insert="fragments/reportingAnalyCompHeader.html :: reportingHeader"></div>
+  <section>
+    <table class="table table-sm table-hover  table-hover">
+      <thead>
+      <tr>
+        <th></th>
+        <th th:each="col: ${headers}" scope="col" th:text="${{col}}"></th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="data : ${datas}">
+        <td th:text="${{data.imprimante.name}}"></td>
+        <td th:each="col : ${data.lignes}" th:text="${{col.quantity}}"></td>
+      </tr>
+      </tbody>
+    </table>
+  </section>
+</main>
+<!-- /.container -->
+<script th:src="@{/jquery.min.js}"></script>
+<script th:src="@{/bootstrap.min.js}"></script>
+</body>
+</html>
