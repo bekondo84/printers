@@ -163,7 +163,7 @@ public class AnalyseComparativeFacadeImpl implements AnalyseComparativeFacade {
         final List<PrintUsage> datas = printUsageService.getPrinterForUsers(start, end);
         final List<AnalyseComparativeData> result = new ArrayList<>();
         final List<String> months = getMonthsBetween(start, end);
-
+        //LOG.info(String.format("TYPE ENUM : %s", type));
         if (CollectionUtils.isNotEmpty(datas)) {
             final Map<Object, List<PrintUsage>> userMap = groupByType(type, datas);
             for (Object user : userMap.keySet()) {
@@ -171,8 +171,7 @@ public class AnalyseComparativeFacadeImpl implements AnalyseComparativeFacade {
                 result.add(row);
                 if (TypeEnum.PRINTER.equals(type)) {
                     row.setImprimante(imprimantePopulator.populate((Imprimante) user));
-                }
-                if (TypeEnum.STRUCTURE.equals(type)
+                } else if (TypeEnum.STRUCTURE.equals(type)
                         || TypeEnum.AFFECTATION.equals(type)) {
                     row.setStructure(structurePopulator.populate((Structure) user));
                 } else  {

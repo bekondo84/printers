@@ -21,6 +21,7 @@
         <th scope="col">ID</th>
         <th scope="col">Nom</th>
         <th scope="col">Date</th>
+        <th scope="col">Fichier</th>
         <th scope="col">Total impression</th>
       </tr>
       </thead>
@@ -29,6 +30,7 @@
         <td th:text="${{data.user.id}}"></td>
         <td th:text="${{data.user.name}}"></td>
         <td th:text="${{data.date}}"></td>
+        <td th:text="${{data.filename}}"></td>
         <td th:text="${{data.output}}"></td>
       </tr>
       </tbody>

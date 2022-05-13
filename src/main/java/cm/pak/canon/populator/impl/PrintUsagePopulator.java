@@ -23,6 +23,7 @@ public class PrintUsagePopulator implements Populator<PrintUsage, PrintUsageData
         final PrintUsageData printUsage = new PrintUsageData();
         printUsage.setUser(userPopulator.populate(data.getUser()));
         printUsage.setPrinter(imprimantePopulator.populate(data.getPrinter()));
+        printUsage.setFilename(data.getFileName());
         printUsage.setOriginal(data.getOriginalPages());
         printUsage.setOutput(data.getOutputPages());
         if (Objects.nonNull(data.getStartTime())) {

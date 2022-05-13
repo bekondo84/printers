@@ -11,6 +11,8 @@ public class PrintUsageData implements Serializable {
 
     private String date ;
 
+    private String filename ;
+
     private int original ;
 
     private int output ;
@@ -64,5 +66,13 @@ public class PrintUsageData implements Serializable {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
     }
 }
