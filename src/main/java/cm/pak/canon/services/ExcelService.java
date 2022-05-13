@@ -5,10 +5,19 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 public interface ExcelService  {
 
+    default ByteArrayInputStream excelExpoter(final String[] header, final List data, final ExcelRowService rowService) throws NoSuchFieldException, IllegalAccessException, IOException {
+        final Workbook workbook = createExcel(header, data, rowService);
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        workbook.write(outputStream);
+        return new ByteArrayInputStream(outputStream.toByteArray());
+    }
      /**
       *
       * @param header
