@@ -13,6 +13,7 @@ import cm.pak.canon.services.ExcelRowService;
 import cm.pak.canon.services.ExcelService;
 import cm.pak.canon.services.ImprimanteService;
 import cm.pak.canon.services.impl.*;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.poi.util.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,21 +123,63 @@ public class CanonHomeCtr {
     public String reporting(final Model model, @ModelAttribute("searh") final SearchBean search) throws ParseException {
 
         if (search.getGroupBy() == 1) {
-            processGroupingByAfectation(printUsageFacade.getPrinterForUsers(search.getFrom(), search.getTo()), model, search);
+            final List<PrintUsageData> datas = printUsageFacade.getPrinterForUsers(search.getFrom(), search.getTo());
+            if (search.getVueType()==1) {
+                processGroupingByAfectation(datas, model, search);
+            } else {
+                chartForUsers(model, search, datas);
+            }
             return "/reportingUsers";
         }
 
         if (search.getGroupBy() == 2) {
-            processGroupingByAfectation(printUsageFacade.getPrinterForPrinters(search.getFrom(), search.getTo()), model, search);
+            final List<PrintUsageData> datas = printUsageFacade.getPrinterForPrinters(search.getFrom(), search.getTo());
+            if (search.getVueType() == 1) {
+                processGroupingByAfectation(datas, model, search);
+            } else {
+               final List<List<Object>> chartData = new ArrayList<>();
+                        CollectionUtils.emptyIfNull(datas)
+                                .forEach(data -> chartData.add(Arrays.asList(data.getPrinter().getName(), data.getOutput())));
+                        model.addAttribute("search", search);
+                        model.addAttribute("datas", chartData);
+            }
             return "/reportingPrinters";
         }
 
         if (search.getGroupBy() == 3) {
-            processGroupingByAfectation(printUsageFacade.printGroupbyAffectation(search.getFrom(), search.getTo()), model, search);
+            final List<PrintUsageData> datas = printUsageFacade.printGroupbyAffectation(search.getFrom(), search.getTo());
+            if (search.getVueType() == 1) {
+                processGroupingByAfectation(datas, model, search);
+            } else {
+                chartDataForStructures(model, search, datas);
+            }
             return "/reportingAffectations";
         }
-        processGroupingByAfectation(printUsageFacade.printGroupbyStructure(search.getFrom(), search.getTo()), model, search);
+        final List<PrintUsageData> datas = printUsageFacade.printGroupbyStructure(search.getFrom(), search.getTo());
+
+        if (search.getVueType() == 1) {
+            processGroupingByAfectation(datas, model, search);
+        } else {
+            chartDataForStructures(model, search, datas);
+        }
         return "/reportingStructures";
+    }
+
+    private void chartForUsers(Model model, SearchBean search, List<PrintUsageData> datas) {
+        final List<List<Object>> chartData = new ArrayList<>();
+        CollectionUtils.emptyIfNull(datas)
+                .forEach(data -> chartData.add(Arrays.asList(data.getUser().getId(), data.getOutput())));
+        model.addAttribute("search", search);
+        model.addAttribute("datas", chartData);
+    }
+
+    private void chartDataForStructures(Model model, SearchBean search, List<PrintUsageData> datas) {
+        final List<List<Object>> chartData = new ArrayList<>();
+        CollectionUtils.emptyIfNull(datas)
+                .forEach(data -> chartData.add(Arrays.asList(data.getStructure().getCode(), data.getOutput())));
+        model.addAttribute("search", search);
+        model.addAttribute("datas", chartData);
+        LOG.info(String.format("DATAS : %s", chartData));
     }
 
     @PostMapping(value = "/reporting", params = "action=extract")
@@ -188,7 +231,13 @@ public class CanonHomeCtr {
     }
     @PostMapping(value = "/reporting-str", params = "action=find")
     public String reportingStructure(final Model model, @ModelAttribute("search") final SearchBean search) throws ParseException {
-        reportingPerStructure(search.getCodeStructure(), printUsageFacade.getPrintUsageForStructureForDates(search.getFrom(), search.getTo(), search.getCodeStructure()), model, search);
+        final List<PrintUsageData> datas = printUsageFacade.getPrintUsageForStructureForDates(search.getFrom(), search.getTo(), search.getCodeStructure());
+
+         if (search.getVueType() == 1) {
+             reportingPerStructure(search.getCodeStructure(), datas, model, search);
+         } else {
+             chartForUsers(model, search, datas);
+         }
         return "/reportingPrintusageForStructure";
     }
 

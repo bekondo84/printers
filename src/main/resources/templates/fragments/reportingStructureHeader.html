@@ -16,17 +16,24 @@
       <section>
             <form th:action="@{/reporting-str}" th:object="${search}" method="post">
                 <div class="form-row">
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-3">
                         <label for="from">De</label>
                         <input type="date" class="form-control" id="from" placeholder="date debut" th:field="*{from}">
                     </div>
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-3">
                         <label for="to">A</label>
                         <input type="date" class="form-control" id="to" placeholder="date fin" th:field="*{to}">
                     </div>
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-3">
                         <label for="to">Structure</label>
                         <input type="text" class="form-control" id="codeStructure" placeholder="Code de la structure" th:field="*{codeStructure}">
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label for="vuetype">Type Vue</label>
+                        <select id="vuetype" class="form-control form-control-sm" th:field="*{vueType}">
+                            <option value="1">Liste</option>
+                            <option value="2">Chart</option>
+                        </select>
                     </div>
                 </div>
                 <button type="submit" name="action" value="find" class="btn btn-primary">Rechercher</button>

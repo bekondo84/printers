@@ -7,6 +7,7 @@ public class SearchBean implements Serializable {
    private String from ;
    private String to ;
    private int groupBy ;
+   private int vueType;
    private String codeStructure;
    private String userId;
    private String cycle ;
@@ -60,6 +61,14 @@ public class SearchBean implements Serializable {
 
     public void setCycle(String cycle) {
         this.cycle = cycle;
+    }
+
+    public int getVueType() {
+        return vueType;
+    }
+
+    public void setVueType(int vueType) {
+        this.vueType = vueType;
     }
 
     @Override

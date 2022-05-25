@@ -68,12 +68,12 @@ public class AnalyseComparativeFacadeImplTest extends AnalyseComparativeFacadeIm
         final List<Week> weeks = getWeeksBetween(from, to);
         assertNotNull(weeks);
         assertTrue(CollectionUtils.isNotEmpty(weeks));
-        assertEquals(SDF.format(weeks.get(0).getFrom()), "2022-04-01");
-        assertEquals(SDF.format(weeks.get(0).getTo()), "2022-04-03");
-        assertEquals(SDF.format(weeks.get(1).getFrom()), "2022-04-04");
-        assertEquals(SDF.format(weeks.get(1).getTo()), "2022-04-10");
-        assertEquals(SDF.format(weeks.get(4).getFrom()), "2022-04-25");
-        assertEquals(SDF.format(weeks.get(4).getTo()), "2022-05-01");
+        assertEquals(SDF.format(weeks.get(0).getFrom()), "28/03/2022");
+        assertEquals(SDF.format(weeks.get(0).getTo()), "03/04/2022");
+        assertEquals(SDF.format(weeks.get(1).getFrom()), "04/04/2022");
+        assertEquals(SDF.format(weeks.get(1).getTo()), "10/04/2022");
+        assertEquals(SDF.format(weeks.get(4).getFrom()), "25/04/2022");
+        assertEquals(SDF.format(weeks.get(4).getTo()), "01/05/2022");
     }
 
     private List<PrintUsage> getPrintDateForUsers() throws ParseException {

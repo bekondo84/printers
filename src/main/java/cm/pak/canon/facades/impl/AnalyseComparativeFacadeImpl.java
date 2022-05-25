@@ -195,7 +195,7 @@ public class AnalyseComparativeFacadeImpl implements AnalyseComparativeFacade {
     }
 
     protected  List<AnalyseComparativeData> analyseComparativePerDays(final TypeEnum type, final String start, final String end) throws ParseException {
-        LOG.info(String.format("TYPE ENUM IS : %s", type));
+        //LOG.info(String.format("TYPE ENUM IS : %s", type));
         final List<PrintUsage> datas = printUsageService.getPrinterForUsers(start, end);
         final List<AnalyseComparativeData> result = new ArrayList<>();
         final List<String> days = getDatesBetween(start, end);
