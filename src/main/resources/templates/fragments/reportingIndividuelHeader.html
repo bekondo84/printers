@@ -16,17 +16,33 @@
       <section>
             <form th:action="@{/reporting-indiv}" th:object="${search}" method="post">
                 <div class="form-row">
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-2">
                         <label for="from">De</label>
-                        <input type="date" class="form-control" id="from" placeholder="date debut" th:field="*{from}">
+                        <input type="date" class="form-control" id="from" placeholder="date debut" th:field="*{from}" required>
                     </div>
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-2">
                         <label for="to">A</label>
-                        <input type="date" class="form-control" id="to" placeholder="date fin" th:field="*{to}">
+                        <input type="date" class="form-control" id="to" placeholder="date fin" th:field="*{to}" required>
                     </div>
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-2">
                         <label for="userId">Identifiant</label>
-                        <input type="text" class="form-control" id="userId" placeholder="Identifiant utilisateur" th:field="*{userId}">
+                        <input type="text" class="form-control" id="userId" required placeholder="Identifiant utilisateur" th:field="*{userId}">
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="cycle">Cycle</label>
+                        <select id="cycle" class="form-control form-control-sm" th:field="*{cycle}">
+                            <option value="1">Journalier</option>
+                            <option value="2">Hebdomadaire</option>
+                            <option value="3">Mensuel</option>
+                            <option value="4">Annuel</option>
+                        </select>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label for="vuetype">Type Vue</label>
+                        <select id="vuetype" class="form-control form-control-sm" th:field="*{vueType}">
+                            <option value="1">Liste</option>
+                            <option value="2">Chart</option>
+                        </select>
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary" name="action" value="find">Rechercher</button>

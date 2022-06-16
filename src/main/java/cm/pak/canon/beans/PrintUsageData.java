@@ -9,6 +9,8 @@ public class PrintUsageData implements Serializable {
 
     private StructureData structure;
 
+    private StructureData service ;
+
     private String date ;
 
     private String filename ;
@@ -74,5 +76,13 @@ public class PrintUsageData implements Serializable {
 
     public void setFilename(String filename) {
         this.filename = filename;
+    }
+
+    public StructureData getService() {
+        return service;
+    }
+
+    public void setService(StructureData service) {
+        this.service = service;
     }
 }

@@ -42,7 +42,7 @@
 <header th:insert="fragments/header.html :: header"> </header>
 <main role="main" class="container">
   <div th:insert="fragments/reportingStructureHeader.html :: reportingHeader"></div>
-  <section th:if="${search.vueType == 1}">
+  <section th:if="${search.groupBy == 1 && search.vueType == 1}">
     <table class="table table-sm table-hover  table-hover">
       <thead>
       <tr>
@@ -60,7 +60,25 @@
       </tbody>
     </table>
   </section>
-  <section th:unless="search.vueType == 2">
+  <section th:if="${search.groupBy == 2 && search.vueType == 1}">
+    <table class="table table-sm table-hover  table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Service</th>
+        <th scope="col">Nom Service</th>
+        <th scope="col">Total impression</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="data : ${datas}">
+        <td th:text="${{data.service.code}}"></td>
+        <td th:text="${{data.service.intitule}}"></td>
+        <td th:text="${{data.output}}"></td>
+      </tr>
+      </tbody>
+    </table>
+  </section>
+  <section th:if="${search.vueType == 2}">
     <div id="chart_div"></div>
   </section>
 </main>

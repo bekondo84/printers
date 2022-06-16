@@ -32,6 +32,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 public class CanonHomeCtr {
@@ -140,8 +141,7 @@ public class CanonHomeCtr {
                final List<List<Object>> chartData = new ArrayList<>();
                         CollectionUtils.emptyIfNull(datas)
                                 .forEach(data -> chartData.add(Arrays.asList(data.getPrinter().getName(), data.getOutput())));
-                        model.addAttribute("search", search);
-                        model.addAttribute("datas", chartData);
+                populateModel(model, search, chartData);
             }
             return "/reportingPrinters";
         }
@@ -165,21 +165,38 @@ public class CanonHomeCtr {
         return "/reportingStructures";
     }
 
+    private void chartForPeriod(Model model, SearchBean search, List<PrintUsageData> datas) {
+        final List<List<Object>> chartData = new ArrayList<>();
+        CollectionUtils.emptyIfNull(datas)
+                .forEach(data -> chartData.add(Arrays.asList(data.getDate().replace("-", ""), data.getOutput())));
+        LOG.info(chartData.toString());
+        populateModel(model, search, chartData);
+    }
+
     private void chartForUsers(Model model, SearchBean search, List<PrintUsageData> datas) {
         final List<List<Object>> chartData = new ArrayList<>();
         CollectionUtils.emptyIfNull(datas)
                 .forEach(data -> chartData.add(Arrays.asList(data.getUser().getId(), data.getOutput())));
-        model.addAttribute("search", search);
-        model.addAttribute("datas", chartData);
+        populateModel(model, search, chartData);
     }
 
     private void chartDataForStructures(Model model, SearchBean search, List<PrintUsageData> datas) {
         final List<List<Object>> chartData = new ArrayList<>();
         CollectionUtils.emptyIfNull(datas)
-                .forEach(data -> chartData.add(Arrays.asList(data.getStructure().getCode(), data.getOutput())));
+                .forEach(data -> chartData.add(Arrays.asList(Objects.nonNull(data.getStructure()) ? data.getStructure().getCode(): null, data.getOutput())));
+        populateModel(model, search, chartData);
+    }
+
+    private void populateModel(Model model, SearchBean search, List<List<Object>> chartData) {
         model.addAttribute("search", search);
         model.addAttribute("datas", chartData);
-        LOG.info(String.format("DATAS : %s", chartData));
+    }
+
+    private void chartDataForServices(Model model, SearchBean search, List<PrintUsageData> datas) {
+        final List<List<Object>> chartData = new ArrayList<>();
+        CollectionUtils.emptyIfNull(datas)
+                .forEach(data -> chartData.add(Arrays.asList(Objects.nonNull(data.getService()) ? data.getService().getCode(): null, data.getOutput())));
+        populateModel(model, search, chartData);
     }
 
     @PostMapping(value = "/reporting", params = "action=extract")
@@ -231,19 +248,28 @@ public class CanonHomeCtr {
     }
     @PostMapping(value = "/reporting-str", params = "action=find")
     public String reportingStructure(final Model model, @ModelAttribute("search") final SearchBean search) throws ParseException {
-        final List<PrintUsageData> datas = printUsageFacade.getPrintUsageForStructureForDates(search.getFrom(), search.getTo(), search.getCodeStructure());
+        final List<PrintUsageData> datas = printUsageFacade.getPrintUsageForStructureForDates(search);
 
-         if (search.getVueType() == 1) {
-             reportingPerStructure(search.getCodeStructure(), datas, model, search);
-         } else {
-             chartForUsers(model, search, datas);
-         }
+        if (search.getGroupBy() == 1) {
+            if (search.getVueType() == 1) {
+                reportingPerStructure(search.getCodeStructure(), datas, model, search);
+            } else {
+                chartForUsers(model, search, datas);
+            }
+        } else {
+            //Group by Structure
+            if (search.getVueType() == 1) {
+                reportingPerStructure(search.getCodeStructure(), datas, model, search);
+            } else {
+                chartDataForServices(model, search, datas);
+            }
+        }
         return "/reportingPrintusageForStructure";
     }
 
     @PostMapping(value = "/reporting-str", params = "action=extract")
     public void extractStructure(final HttpServletResponse response, final Model model, @ModelAttribute("search") final SearchBean search) throws ParseException, IOException, NoSuchFieldException, IllegalAccessException {
-        List<PrintUsageData> datas = printUsageFacade.getPrintUsageForStructureForDates(search.getFrom(), search.getTo(), search.getCodeStructure());
+        List<PrintUsageData> datas = printUsageFacade.getPrintUsageForStructureForDates(search);
         reportingPerStructure(search.getCodeStructure(), datas, model, search);
         final ByteArrayInputStream stream = excelService.excelExpoter(new String[]{"ID", "NOM", "TOTAL IMPRESSIONS"}, datas, usersRowService);
         exporter(response, stream, "ImpressionsParStructure.xlsx");
@@ -269,13 +295,19 @@ public class CanonHomeCtr {
 
     @PostMapping(value = "/reporting-indiv", params = "action=find")
     public String reportingIndividuel(final Model model, @ModelAttribute("search") final SearchBean search) throws ParseException {
-        reportingPerStructure(search.getUserId(), printUsageFacade.getUserPrintUsageResume(search.getFrom(), search.getTo(), search.getUserId()), model, search);
+        final List<PrintUsageData> datas = printUsageFacade.getUserPrintUsageResume(search);
+
+        if (search.getVueType() == 1) {
+            reportingPerStructure(search.getUserId(), datas, model, search);
+        } else {
+            chartForPeriod(model, search, datas);
+        }
         return "/reportingPrintusageIndividual";
     }
 
     @PostMapping(value = "/reporting-indiv", params = "action=extract")
     public void extractIndividuel(final HttpServletResponse response, final Model model, @ModelAttribute("search") final SearchBean search) throws ParseException, IOException, NoSuchFieldException, IllegalAccessException {
-        final List<PrintUsageData> datas = printUsageFacade.getUserPrintUsageResume(search.getFrom(), search.getTo(), search.getUserId());
+        final List<PrintUsageData> datas = printUsageFacade.getUserPrintUsageResume(search);
         reportingPerStructure(search.getUserId(),datas , model, search);
         ByteArrayInputStream stream = excelService.excelExpoter(new String[]{"ID", "NOM", "DATE", "TOTAL IMPRESSIONS"}, datas, userWithDateRowService);
         exporter(response, stream, "printReport.xlsx");
@@ -294,7 +326,7 @@ public class CanonHomeCtr {
     public String analyseComparative(final Model model, @ModelAttribute("search") SearchBean search) throws ParseException {
         //LOG.info(String.format("Headers : %s", analyseComparativeFacade.headers(search.getCycle(), search.getFrom(), search.getTo())));
         model.addAttribute("headers", analyseComparativeFacade.headers(search.getCycle(), search.getFrom(), search.getTo()));
-        model.addAttribute("datas", analyseComparativeFacade.analyseComparative(search.getFrom(), search.getTo(), Integer.toString(search.getGroupBy()), search.getCycle()));
+        model.addAttribute("datas", analyseComparativeFacade.analyseComparative(search));
 
         if (search.getGroupBy() == 2) {
             return "/comparativeAnalyzePrinters";
@@ -308,7 +340,7 @@ public class CanonHomeCtr {
     @PostMapping(value = "/reporting-anal-comp", params = "action=extract")
     public void analyseComparativeExtract(final HttpServletResponse response, final Model model, @ModelAttribute("search") SearchBean search) throws ParseException, IOException, NoSuchFieldException, IllegalAccessException {
         final List<String> headers = analyseComparativeFacade.headers(search.getCycle(), search.getFrom(), search.getTo());
-        final List<AnalyseComparativeData> datas = analyseComparativeFacade.analyseComparative(search.getFrom(), search.getTo(), Integer.toString(search.getGroupBy()), search.getCycle());
+        final List<AnalyseComparativeData> datas = analyseComparativeFacade.analyseComparative(search);
         model.addAttribute("headers", headers);
         model.addAttribute("datas", datas);
         ExcelRowService service =  null ;

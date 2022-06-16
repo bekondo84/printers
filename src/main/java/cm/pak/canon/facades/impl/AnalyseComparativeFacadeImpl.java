@@ -2,9 +2,13 @@ package cm.pak.canon.facades.impl;
 
 import cm.pak.canon.beans.AnalyseComparativeData;
 import cm.pak.canon.beans.AnalyseComparativeDetailData;
+import cm.pak.canon.beans.SearchBean;
 import cm.pak.canon.beans.Week;
 import cm.pak.canon.facades.AnalyseComparativeFacade;
-import cm.pak.canon.models.*;
+import cm.pak.canon.models.Imprimante;
+import cm.pak.canon.models.PrintUsage;
+import cm.pak.canon.models.Structure;
+import cm.pak.canon.models.User;
 import cm.pak.canon.populator.impl.ImprimantePopulator;
 import cm.pak.canon.populator.impl.StructurePopulator;
 import cm.pak.canon.populator.impl.UserPopulator;
@@ -17,13 +21,13 @@ import org.springframework.stereotype.Component;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.DayOfWeek;
-import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+
+import static cm.pak.canon.DateUtils.*;
 
 @Component
 public class AnalyseComparativeFacadeImpl implements AnalyseComparativeFacade {
@@ -59,19 +63,24 @@ public class AnalyseComparativeFacadeImpl implements AnalyseComparativeFacade {
     }
 
     @Override
-    public List<AnalyseComparativeData> analyseComparative(String start, String end, String groupBy, String cycle) throws ParseException {
-        TypeEnum type = getType(groupBy);
-        if (cycle.equalsIgnoreCase("1")) {
-            return analyseComparativePerDays(type, start, end);
-        }else if(cycle.equalsIgnoreCase("3")) {
-            return analyseComparativePerMonths(type, start, end);
-        } else if(cycle.equalsIgnoreCase("4")) {
-            return analyseComparativePerYears(type, start, end);
-        } else if (cycle.equalsIgnoreCase("2")) {
-            return analyseComparativePerWeeks(type, start, end);
+    public List analyseComparative(final SearchBean search) throws ParseException {
+        TypeEnum type = getType(Integer.toString(search.getGroupBy()));
+        final List<AnalyseComparativeData> result = new ArrayList<>();
+
+        if (search.getCycle().equalsIgnoreCase("1")) {
+            result.addAll(analyseComparativePerDays(type, search.getFrom(), search.getTo()));
+        }else if(search.getCycle().equalsIgnoreCase("3")) {
+            result.addAll(analyseComparativePerMonths(type, search.getFrom(), search.getTo()));
+        } else if(search.getCycle().equalsIgnoreCase("4")) {
+            result.addAll(analyseComparativePerYears(type, search.getFrom(), search.getTo()));
+        } else if (search.getCycle().equalsIgnoreCase("2")) {
+            result.addAll(analyseComparativePerWeeks(type, search.getFrom(), search.getTo()));
         }
 
-       return null;
+        if (search.getVueType() == 1) {
+            return result;
+        }
+        return convertAnalyticsToReportData(result);
     }
 
     private TypeEnum getType(String groupBy) {
@@ -93,15 +102,7 @@ public class AnalyseComparativeFacadeImpl implements AnalyseComparativeFacade {
             final Map<Object, List<PrintUsage>> userMap = groupByType(type, datas);
             for (Object user : userMap.keySet()) {
                 final AnalyseComparativeData row = new AnalyseComparativeData();
-                result.add(row);
-                if (TypeEnum.PRINTER.equals(type)) {
-                    row.setImprimante(imprimantePopulator.populate((Imprimante) user));
-                } else if (TypeEnum.STRUCTURE.equals(type)
-                        || TypeEnum.AFFECTATION.equals(type)) {
-                    row.setStructure(structurePopulator.populate((Structure) user));
-                } else  {
-                    row.setUser(userPopulator.populate((User) user));
-                }
+                setObjectByType(result, row, type, user);
 
                 Map<Week, Integer> printsperDays = CollectionUtils.emptyIfNull(userMap.get(user))
                         .stream()
@@ -132,15 +133,7 @@ public class AnalyseComparativeFacadeImpl implements AnalyseComparativeFacade {
             final Map<Object, List<PrintUsage>> userMap = groupByType(type, datas);
             for (Object user : userMap.keySet()) {
                 final AnalyseComparativeData row = new AnalyseComparativeData();
-                result.add(row);
-                if (TypeEnum.PRINTER.equals(type)) {
-                    row.setImprimante(imprimantePopulator.populate((Imprimante) user));
-                } else if (TypeEnum.STRUCTURE.equals(type)
-                        || TypeEnum.AFFECTATION.equals(type)) {
-                    row.setStructure(structurePopulator.populate((Structure) user));
-                } else  {
-                    row.setUser(userPopulator.populate((User) user));
-                }
+                setObjectByType(result, row, type, user);
 
                 Map<String, Integer> printsperDays = CollectionUtils.emptyIfNull(userMap.get(user))
                         .stream()
@@ -158,6 +151,18 @@ public class AnalyseComparativeFacadeImpl implements AnalyseComparativeFacade {
         return result;
     }
 
+    private void setObjectByType(List<AnalyseComparativeData> result, AnalyseComparativeData row, TypeEnum type, Object user) {
+        result.add(row);
+        if (TypeEnum.PRINTER.equals(type)) {
+            row.setImprimante(imprimantePopulator.populate((Imprimante) user));
+        } else if (TypeEnum.STRUCTURE.equals(type)
+                || TypeEnum.AFFECTATION.equals(type)) {
+            row.setStructure(structurePopulator.populate((Structure) user));
+        } else  {
+            row.setUser(userPopulator.populate((User) user));
+        }
+    }
+
     protected List<AnalyseComparativeData> analyseComparativePerMonths(final TypeEnum type, final String start, final String end) throws ParseException {
         final SimpleDateFormat sdf = new SimpleDateFormat("MM/yyyy");
         final List<PrintUsage> datas = printUsageService.getPrinterForUsers(start, end);
@@ -168,15 +173,7 @@ public class AnalyseComparativeFacadeImpl implements AnalyseComparativeFacade {
             final Map<Object, List<PrintUsage>> userMap = groupByType(type, datas);
             for (Object user : userMap.keySet()) {
                 final AnalyseComparativeData row = new AnalyseComparativeData();
-                result.add(row);
-                if (TypeEnum.PRINTER.equals(type)) {
-                    row.setImprimante(imprimantePopulator.populate((Imprimante) user));
-                } else if (TypeEnum.STRUCTURE.equals(type)
-                        || TypeEnum.AFFECTATION.equals(type)) {
-                    row.setStructure(structurePopulator.populate((Structure) user));
-                } else  {
-                    row.setUser(userPopulator.populate((User) user));
-                }
+                setObjectByType(result, row, type, user);
 
                 Map<String, Integer> printsperDays = CollectionUtils.emptyIfNull(userMap.get(user))
                         .stream()
@@ -204,15 +201,7 @@ public class AnalyseComparativeFacadeImpl implements AnalyseComparativeFacade {
             Map<Object, List<PrintUsage>> userMap = groupByType(type, datas);
             for (Object user : userMap.keySet()) {
                 final AnalyseComparativeData row = new AnalyseComparativeData();
-                result.add(row);
-                if (TypeEnum.PRINTER.equals(type)) {
-                    row.setImprimante(imprimantePopulator.populate((Imprimante) user));
-                } else if (TypeEnum.STRUCTURE.equals(type)
-                        || TypeEnum.AFFECTATION.equals(type)) {
-                    row.setStructure(structurePopulator.populate((Structure) user));
-                } else  {
-                    row.setUser(userPopulator.populate((User) user));
-                }
+                setObjectByType(result, row, type, user);
 
                 Map<String, Integer> printsperDays = CollectionUtils.emptyIfNull(userMap.get(user))
                         .stream()
@@ -230,6 +219,25 @@ public class AnalyseComparativeFacadeImpl implements AnalyseComparativeFacade {
         return result;
     }
 
+    protected List<List<Object>> convertAnalyticsToReportData(final List<AnalyseComparativeData> datas) {
+        final List<List<Object>> result = new ArrayList<>();
+        final List<Object> header = datas.get(0).getLignes()
+                     .stream().map(l -> l.getValue())
+                     .collect(Collectors.toList());
+        header.add(0, "Source");
+        result.add(header);
+
+        for (AnalyseComparativeData data : datas) {
+            final List values = new ArrayList<>();
+            values.add(Objects.nonNull(data.getStructure()) ? data.getStructure().getCode(): Objects.nonNull(data.getImprimante()) ? data.getImprimante().getName():data.getUser().getId() );
+            values.addAll(data.getLignes()
+                    .stream().map(l -> l.getQuantity())
+                    .collect(Collectors.toList()));
+            result.add(values);
+        }
+
+        return result;
+    }
     /**
      *
      * @param type
@@ -264,82 +272,6 @@ public class AnalyseComparativeFacadeImpl implements AnalyseComparativeFacade {
     }
 
 
-    private List<String> getDatesBetween(final String to, final String from) throws ParseException {
-         final LocalDate toLocal = getToLocal(to);
-         final LocalDate fromLocal = getToLocal(from);
-         long numOfDaysBetween = ChronoUnit.DAYS.between(toLocal, fromLocal);
-         return IntStream.iterate(0, i -> i+1)
-                 .limit(numOfDaysBetween + 1)
-                 .mapToObj(i -> SDF.format(Date.from(toLocal.plusDays(i).atStartOfDay()
-                         .atZone(ZoneId.systemDefault()).toInstant())))
-                 .collect(Collectors.toList());
-    }
-
-    protected List<Week> getWeeksBetween(final String from, final String to) throws ParseException {
-        final LocalDate toLocal = getToLocal(to);
-        LocalDate startLocal = getToLocal(from);
-        if (startLocal.getDayOfWeek().equals(DayOfWeek.SUNDAY)) {
-            startLocal = startLocal.plusDays(1);
-        } else if( startLocal.getDayOfWeek().equals(DayOfWeek.TUESDAY)) {
-            startLocal = startLocal.minusDays(1);
-        } else if( startLocal.getDayOfWeek().equals(DayOfWeek.WEDNESDAY)) {
-            startLocal = startLocal.minusDays(2);
-        } else if( startLocal.getDayOfWeek().equals(DayOfWeek.THURSDAY)) {
-            startLocal = startLocal.minusDays(3);
-        } else if( startLocal.getDayOfWeek().equals(DayOfWeek.FRIDAY)) {
-            startLocal = startLocal.minusDays(4);
-        } else if( startLocal.getDayOfWeek().equals(DayOfWeek.SATURDAY)) {
-            startLocal = startLocal.minusDays(5);
-        }
-        final LocalDate fromLocal = startLocal ;
-        long numOfDaysBetween = ChronoUnit.WEEKS.between(fromLocal, toLocal);
-        return IntStream.iterate(0, i -> i+1)
-                .limit(numOfDaysBetween + 1)
-                .mapToObj(i -> {
-                    final LocalDate localDate = fromLocal.plusWeeks(i);
-                    return new Week(String.format("Week-%s", i+1), getDate(localDate), getDate(localDate.plusDays(6)));
-                })
-                .collect(Collectors.toList());
-    }
-
-    private List<String> getMonthsBetween(final String to, final String from) throws ParseException {
-        final SimpleDateFormat sdf = new SimpleDateFormat("MM/yyyy");
-        final LocalDate toLocal = getToLocal(to);
-        final LocalDate fromLocal = getToLocal(from);
-        long numOfDaysBetween = ChronoUnit.MONTHS.between(toLocal, fromLocal);
-        return IntStream.iterate(0, i -> i+1)
-                .limit(numOfDaysBetween + 1)
-                .mapToObj(i -> sdf.format(Date.from(toLocal.plusMonths(i)
-                        .atStartOfDay()
-                        .atZone(ZoneId.systemDefault())
-                        .toInstant())))
-                .collect(Collectors.toList());
-    }
-    private List<String> getYearsBetween(final String to, final String from) throws ParseException {
-        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy");
-        final LocalDate toLocal = getToLocal(to);
-        final LocalDate fromLocal = getToLocal(from);
-        long numOfDaysBetween = ChronoUnit.YEARS.between(toLocal, fromLocal);
-        return IntStream.iterate(0, i -> i+1)
-                .limit(numOfDaysBetween + 1)
-                .mapToObj(i -> sdf.format(Date.from(toLocal.plusYears(i)
-                        .atStartOfDay()
-                        .atZone(ZoneId.systemDefault())
-                        .toInstant())))
-                .collect(Collectors.toList());
-    }
-
-    private LocalDate getToLocal(String to) throws ParseException {
-        return SDF.parse(to)
-                .toInstant()
-                .atZone(ZoneId.systemDefault()).toLocalDate();
-    }
-
-    public Date getDate(LocalDate dateToConvert) {
-        return java.util.Date.from(dateToConvert.atStartOfDay()
-                .atZone(ZoneId.systemDefault())
-                .toInstant());
-    }
 
     public void setPrintUsageService(PrintUsageService printUsageService) {
         this.printUsageService = printUsageService;

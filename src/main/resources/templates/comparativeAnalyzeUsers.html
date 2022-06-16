@@ -8,13 +8,47 @@
   <link rel="icon" type="image/x-icon" href="/images/favicon.ico">
   <link rel="stylesheet" th:href="@{/bootstrap.min.css}">
   <script th:src="@{/jquery.min.js}"></script>
+  <script type="text/javascript" th:src="@{/loader.js}"></script>
+  <script type="text/javascript" th:inline="javascript">
+     google.charts.load('current', {'packages':['bar']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart() {
+        var data = google.visualization.arrayToDataTable([[${datas}]]);
+
+        var options = {
+          chart: {
+            title: 'PAK',
+            subtitle: 'Print compare',
+          },
+          bars: 'horizontal', // Required for Material Bar Charts.
+          hAxis: {format: 'decimal'},
+          height: 800,
+          //colors: []
+        };
+
+        var chart = new google.charts.Bar(document.getElementById('chart_div'));
+
+        chart.draw(data, google.charts.Bar.convertOptions(options));
+
+        var btns = document.getElementById('btn-group');
+
+        btns.onclick = function (e) {
+
+          if (e.target.tagName === 'BUTTON') {
+            options.hAxis.format = e.target.id === 'none' ? '' : e.target.id;
+            chart.draw(data, google.charts.Bar.convertOptions(options));
+          }
+        }
+      }
+  </script>
 </head>
 
 <body>
 <header th:insert="fragments/header.html :: header"> </header>
 <main role="main" class="container">
   <div th:insert="fragments/reportingAnalyCompHeader.html :: reportingHeader"></div>
-  <section>
+  <section th:if="${search.vueType == 1}">
     <table class="table table-sm table-hover  table-hover">
       <thead>
       <tr>
@@ -30,6 +64,9 @@
       </tr>
       </tbody>
     </table>
+  </section>
+  <section th:if="${search.vueType == 2}">
+    <div id="chart_div"></div>
   </section>
 </main>
 <!-- /.container -->

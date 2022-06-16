@@ -1,6 +1,7 @@
 package cm.pak.canon.facades;
 
 import cm.pak.canon.beans.PrintUsageData;
+import cm.pak.canon.beans.SearchBean;
 import cm.pak.canon.models.PrintUsage;
 
 import java.text.ParseException;
@@ -16,7 +17,7 @@ public interface PrintUsageFacade {
 
     List<PrintUsageData> printGroupbyStructure(final String from, final String to) throws ParseException;
 
-    List<PrintUsageData> getPrintUsageForStructureForDates(final String from, final String to, final String structure) throws ParseException;
+    List<PrintUsageData> getPrintUsageForStructureForDates(final SearchBean search) throws ParseException;
 
-    List<PrintUsageData> getUserPrintUsageResume(final String from, final String to, final String user) throws ParseException;
+    List<PrintUsageData> getUserPrintUsageResume(final SearchBean search) throws ParseException;
 }

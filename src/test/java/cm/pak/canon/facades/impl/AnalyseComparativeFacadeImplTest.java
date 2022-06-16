@@ -1,6 +1,7 @@
 package cm.pak.canon.facades.impl;
 
 
+import cm.pak.canon.DateUtils;
 import cm.pak.canon.beans.AnalyseComparativeData;
 import cm.pak.canon.beans.Week;
 import cm.pak.canon.facades.AnalyseComparativeFacade;
@@ -65,7 +66,7 @@ public class AnalyseComparativeFacadeImplTest extends AnalyseComparativeFacadeIm
     void shouldReturnWeekWtihCorrectDate() throws ParseException {
         final String from = "2022-04-01";
         final String to ="2022-05-12";
-        final List<Week> weeks = getWeeksBetween(from, to);
+        final List<Week> weeks = DateUtils.getWeeksBetween(from, to);
         assertNotNull(weeks);
         assertTrue(CollectionUtils.isNotEmpty(weeks));
         assertEquals(SDF.format(weeks.get(0).getFrom()), "28/03/2022");
