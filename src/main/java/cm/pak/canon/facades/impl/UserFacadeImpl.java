@@ -3,11 +3,14 @@ package cm.pak.canon.facades.impl;
 import cm.pak.canon.beans.UserData;
 import cm.pak.canon.beans.UsersBean;
 import cm.pak.canon.facades.UserFacade;
+import cm.pak.canon.models.Account;
+import cm.pak.canon.models.User;
 import cm.pak.canon.populator.impl.UserPopulator;
 import cm.pak.canon.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,4 +45,5 @@ public class UserFacadeImpl implements UserFacade {
             userService.importUsers(mpf);
         }
     }
+
 }

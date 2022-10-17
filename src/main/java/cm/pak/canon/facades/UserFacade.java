@@ -15,4 +15,5 @@ public interface UserFacade {
      * @param bean
      */
     void importUsers(final UsersBean bean) throws IOException;
+
 }
