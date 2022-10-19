@@ -1,0 +1,45 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>Printers History</title>
+  <link rel="stylesheet" th:href="@{/bootstrap.min.css}">
+  <script th:src="@{/jquery.min.js}"></script>
+</head>
+
+<body>
+<header th:insert="fragments/header.html :: header"> </header>
+<main role="main" class="container">
+  <nav class="nav">
+
+  </nav>
+  <section>
+    <table class="table table-sm table-hover  table-hover">
+      <thead>
+      <tr>
+        <th scope="col">Source</th>
+        <th scope="col">Description</th>
+        <th scope="col">Début</th>
+        <th scope="col">Fin</th>
+        <th scope="col">Statut</th>
+        <th scope="col">Erreur</th>
+      </tr>
+      </thead>
+      <tbody>
+        <tr th:each="hist : ${histories}" th:class="'base '+${hist.status=='error' ? 'table-danger' : 'table-success'}">
+           <td><span th:text="${{hist.taskname}}"></span></td>
+           <td><span th:text="${{hist.description}}"></span></td>
+          <td><span th:text="${{hist.startAt}}"></span></td>
+          <td><span th:text="${{hist.endAt}}"></span></td>
+          <td><span th:text="${{hist.status}}"></span></td>
+          <td><span th:text="${{hist.errormessage}}"></span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+</main>
+<script th:src="@{/bootstrap.min.js}"></script>
+</body>
+</html>

@@ -17,7 +17,7 @@
             <label for="printers">Email address</label>
             <select id="printers" class="form-control form-control-sm" th:field="*{printer}">
                 <option th:each="prt : ${printers}"
-                        th:text="${prt.ipAdress}"
+                        th:text="${prt.name}"
                         th:value="${prt.id}">Large select</option>
             </select>
         </div>

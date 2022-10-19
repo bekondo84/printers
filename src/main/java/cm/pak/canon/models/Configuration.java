@@ -12,6 +12,10 @@ public class Configuration implements Serializable {
     //@GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id ;
     private  int pageSize ;
+    private String cronExp;
+    private String username;
+    private String password;
+
 
     public Configuration() {
     }
@@ -32,6 +36,30 @@ public class Configuration implements Serializable {
         this.pageSize = pageSize;
     }
 
+    public String getCronExp() {
+        return cronExp;
+    }
+
+    public void setCronExp(String cronExp) {
+        this.cronExp = cronExp;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -40,8 +68,20 @@ public class Configuration implements Serializable {
         return id == that.id;
     }
 
+
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Configuration{" +
+                "id=" + id +
+                ", pageSize=" + pageSize +
+                ", cronExp='" + cronExp + '\'' +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 }
