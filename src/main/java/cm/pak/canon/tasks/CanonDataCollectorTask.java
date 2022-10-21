@@ -62,7 +62,7 @@ public class CanonDataCollectorTask implements Runnable{
             printerTaskHistory.setStatus("success");
             //Process printLog data
             csvService.processCsv(printer, connectionService.downloadFileFromPrinter(printer.getIpAdress(), config.getUsername(), config.getPassword(), type));
-        } catch (IOException e) {
+        } catch (Exception e) {
             printerTaskHistory.setStatus("error");
             printerTaskHistory.setErrormessage(e.getMessage());
         } finally {

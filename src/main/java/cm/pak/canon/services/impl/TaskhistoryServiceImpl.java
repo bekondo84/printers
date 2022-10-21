@@ -41,7 +41,7 @@ public class TaskhistoryServiceImpl implements TaskHistoryService {
 
     @Override
     public List<TaskHistory> getHistoriesOldThan(int days) {
-        final Date lessDate = DateUtils.addDays(new Date(), days);
+        final Date lessDate = DateUtils.addDays(new Date(), -1*days);
         return historyRepository.getHistoriesOldThan(lessDate);
     }
 }
